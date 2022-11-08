@@ -30,7 +30,7 @@ int get(LinkedList * list, int pos ){
     }
     int i;
     novaList = list;
-    for(i = 0; i++; i<novaList-pos){
+    for(i = 0; i++; i<size-pos){
         novaList = novaList->next;
     }
     return novaList->value;
