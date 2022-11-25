@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 struct{
     int value;
     struct LinkedList * next;
 } typedef LinkedList;
-
 LinkedList * newList(){
     return NULL;
 }
@@ -19,9 +19,7 @@ LinkedList * addList(LinkedList * list, int val){
 }
 LinkedList * getList(LinkedList * list){
     LinkedList * novaList = list;
-    int size = 0;
     while(novaList->next!=NULL){
-        size+=1;
         novaList = novaList->next;
     }
     return novaList;
@@ -34,7 +32,6 @@ int getSize(LinkedList * list){
     }
     return size;
 }
-
 /*
  * Retorna o valor da lista na possição passada nos parametros
  */
@@ -66,15 +63,50 @@ LinkedList * sliptListAt(LinkedList * list, int pos, int resultList){
 
 }
 
+LinkedList * removeAt(LinkedList * list, int pos) {
+    LinkedList *oldList = list;
+    int i, item = getSize(list) - pos;
+    LinkedList *nextItemOnList;
+    nextItemOnList = NULL;
+    for (i = 1; i < item; i++) {
+        list = (LinkedList *) list->next;
+    }
+    if (item >= 1) {
+        LinkedList *itemToRemove;
+        itemToRemove = list->next;
+        if (itemToRemove->next != NULL) {
+            nextItemOnList = itemToRemove->next;
+            list->next = nextItemOnList;
+        } else {
+            nextItemOnList = NULL;
+            list->next = nextItemOnList;
+        }
+        free(itemToRemove);
+        return oldList;
+    }else{
+        if (list->next != NULL) {
+            nextItemOnList = list->next;
+            list->next = nextItemOnList;
+        } else {
+            nextItemOnList = NULL;
+            list->next = nextItemOnList;
+        }
+        free(list);
+        return nextItemOnList;
+    }
+
+
+}
 
 LinkedList * addAtStart(LinkedList * list, int val){
-    LinkedList * copyList = newList();
-    copyList = addList(copyList, val);
+    LinkedList * newListToAdd = newList();
+    newListToAdd = addList(newListToAdd, val);
     LinkedList * oldList = list;
     list = getList(list);
-    list->next = (struct LinkedList *) copyList;
+    list->next = newListToAdd;
     return oldList;
 }
+
 
 void printList(LinkedList * L ){
     while(L!=NULL){
@@ -110,6 +142,7 @@ int main() {
     printf("\nLista L2: ");
     L2 = sliptListAt(L2, 3, 0);
     printList(L2);
-
-
+    L = removeAt(L, 2);
+    printf("\nLista L dps de remover: ");
+    printList(L);
 }
