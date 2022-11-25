@@ -5,17 +5,17 @@ struct{
     struct LinkedList * next;
 } typedef LinkedList;
 
-LinkedList * InicializarLista(){
+LinkedList * newList(){
     return NULL;
 }
-LinkedList * InserirLista(LinkedList * list, int val){
-    LinkedList * novaList = (LinkedList *) malloc(sizeof (LinkedList));
-    if(novaList!=NULL){
-        novaList->value = val;
-        novaList->next = (struct LinkedList *) list;
-        return novaList;
+LinkedList * addList(LinkedList * list, int val){
+    LinkedList * newList = (LinkedList *) malloc(sizeof (LinkedList));
+    if(newList != NULL){
+        newList->value = val;
+        newList->next = (struct LinkedList *) list;
+        return newList;
     }
-
+    return NULL;
 }
 LinkedList * getList(LinkedList * list){
     LinkedList * novaList = list;
@@ -49,21 +49,34 @@ int get(LinkedList * list, int pos ){
     return list->value;
 }
 
+LinkedList * sliptListAt(LinkedList * list, int pos, int resultList){
+    LinkedList * newListZero = list;
+    LinkedList * newListOne = list;
+    int i, item =getSize(list)-pos;
+    for(i = 0; i<item; i++){
+        list = (LinkedList *) list->next;
+        newListZero = (LinkedList *) list->next;
+    }
+    list->next = NULL;
+    if(resultList==1){
+        return newListOne;
+    }else if(resultList == 0){
+        return newListZero;
+    }
 
-LinkedList * InserirComecoLista(LinkedList * list, int val){
-    LinkedList * novaList = InicializarLista();
-    novaList = InserirLista(novaList, val);
+}
+
+
+LinkedList * addAtStart(LinkedList * list, int val){
+    LinkedList * copyList = newList();
+    copyList = addList(copyList, val);
     LinkedList * oldList = list;
     list = getList(list);
-    list->next = (struct LinkedList *) novaList;
+    list->next = (struct LinkedList *) copyList;
     return oldList;
 }
-LinkedList * ProximoItem(LinkedList list){
-    return (LinkedList *) list.next;
-}
 
-
-void ImprimeList(LinkedList * L ){
+void printList(LinkedList * L ){
     while(L!=NULL){
         printf("[%d]->", L->value);
         L = L->next;
@@ -72,15 +85,31 @@ void ImprimeList(LinkedList * L ){
 
 int main() {
     LinkedList * L;
-    L = InicializarLista();
-    L = InserirLista(L, 1);
-    L = InserirLista(L, 10);
-    L = InserirLista(L, 100);
-    L = InserirLista(L, 1000);
-    L = InserirLista(L, 10000);
-    ImprimeList(L);
-    printf("\nvalor: %d\n", get(L, 5));
-    L = InserirComecoLista(L, 5);
-    ImprimeList(L);
-    printf("\n%d\n", get(L, 2));
+    L = newList();
+    L = addList(L, 1);
+    L = addList(L, 10);
+    L = addList(L, 100);
+    L = addList(L, 1000);
+    L = addList(L, 10000);
+    printList(L);
+    printf("\nValor posicao 5: %d\n", get(L, 5));
+    L = addAtStart(L, 5);
+    printList(L);
+    printf("\nValor posicao 2: %d\n", get(L, 2));
+    LinkedList * L2;
+    L2 = newList();
+    L2 = addList(L2, 1);
+    L2 = addList(L2, 10);
+    L2 = addList(L2, 100);
+    L2 = addList(L2, 1000);
+    L2 = addList(L2, 10000);
+    L2 = addAtStart(L2, 5);
+    printf("\nLista L: ");
+    L = sliptListAt(L, 3, 1);
+    printList(L);
+    printf("\nLista L2: ");
+    L2 = sliptListAt(L2, 3, 0);
+    printList(L2);
+
+
 }
