@@ -63,12 +63,35 @@ LinkedList * sliptListAt(LinkedList * list, int pos, int resultList){
 
 }
 
+LinkedList * sort(LinkedList * list){
+    LinkedList * listCopy;
+    listCopy = newList();
+    int i,j=1,size = getSize(list), listAsArray[size];
+    for (i = 0; i <= size; i++) {
+        listAsArray[i] = get(list, i);
+    }
+    for (int k = 0; k <= size; ++k) {
+        j = 1;
+        for (i = 0; i < size; i++, j++) {
+            if (listAsArray[i] < listAsArray[j]) {
+                int aux = listAsArray[j];
+                listAsArray[j] = listAsArray[i];
+                listAsArray[i] = aux;
+            }
+        }
+    }
+    for (i = 0; i <=size ; i++) {
+        listCopy = addList(listCopy, listAsArray[i]);
+    }
+    return listCopy;
+}
+
 LinkedList * removeAt(LinkedList * list, int pos) {
     LinkedList *oldList = list;
-    int i, item = getSize(list) - pos;
     LinkedList *nextItemOnList;
     nextItemOnList = NULL;
-    for (i = 1; i < item; i++) {
+    int i, item = getSize(list) - pos;
+    for (i = 1; i < item; i++){
         list = (LinkedList *) list->next;
     }
     if (item >= 1) {
@@ -77,22 +100,26 @@ LinkedList * removeAt(LinkedList * list, int pos) {
         if (itemToRemove->next != NULL) {
             nextItemOnList = itemToRemove->next;
             list->next = nextItemOnList;
+            free(itemToRemove);
+            return oldList;
         } else {
             nextItemOnList = NULL;
             list->next = nextItemOnList;
+            free(itemToRemove);
+            return oldList;
         }
-        free(itemToRemove);
-        return oldList;
-    }else{
+    }else if(item == 0){
         if (list->next != NULL) {
             nextItemOnList = list->next;
             list->next = nextItemOnList;
+            free(list);
+            return nextItemOnList;
         } else {
             nextItemOnList = NULL;
             list->next = nextItemOnList;
+            free(list);
+            return nextItemOnList;
         }
-        free(list);
-        return nextItemOnList;
     }
 
 
@@ -118,24 +145,24 @@ void printList(LinkedList * L ){
 int main() {
     LinkedList * L;
     L = newList();
-    L = addList(L, 1);
-    L = addList(L, 10);
-    L = addList(L, 100);
-    L = addList(L, 1000);
-    L = addList(L, 10000);
+    L = addList(L, 5);
+    L = addList(L, 4);
+    L = addList(L, 2);
+    L = addList(L, 7);
+    L = addList(L, 20);
     printList(L);
     printf("\nValor posicao 5: %d\n", get(L, 5));
-    L = addAtStart(L, 5);
+    L = addAtStart(L, 3);
     printList(L);
     printf("\nValor posicao 2: %d\n", get(L, 2));
     LinkedList * L2;
     L2 = newList();
-    L2 = addList(L2, 1);
-    L2 = addList(L2, 10);
-    L2 = addList(L2, 100);
-    L2 = addList(L2, 1000);
-    L2 = addList(L2, 10000);
-    L2 = addAtStart(L2, 5);
+    L2 = addList(L2, 5);
+    L2 = addList(L2, 4);
+    L2 = addList(L2, 2);
+    L2 = addList(L2, 7);
+    L2 = addList(L2, 20);
+    L2 = addAtStart(L2, 3);
     printf("\nLista L: ");
     L = sliptListAt(L, 3, 1);
     printList(L);
@@ -145,4 +172,20 @@ int main() {
     L = removeAt(L, 2);
     printf("\nLista L dps de remover: ");
     printList(L);
+    LinkedList * L3;
+    L3 = newList();
+    L3 = addList(L3, 10);
+    L3 = addList(L3, 3);
+    L3 = addList(L3, 6);
+    L3 = addList(L3, 2);
+    L3 = addList(L3, 250);
+    L3 = addList(L3, 7);
+    L3 = addList(L3, 15);
+    L3 = addList(L3, 69);
+    L3 = addList(L3, -10);
+    printf("\nLista original: ");
+    printList(L3);
+    printf("\nLista organizada:");
+    L3 = sort(L3);
+    printList(L3);
 }
