@@ -1,7 +1,6 @@
 /**
  * @Author: João Guilherme de A. Prado RA: 05221-007
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -60,6 +59,8 @@ int getSize(linkedList * list){
 //e subtraido a posição da qual solicitada, por exemplo, se eu quiser o valor da posição 3 de uma lista de tamanho 8
 //(7 contando com o 0) então é calculado 7-3= 4, portanto e o quantidade de vezes que eu tenho que percorrer a lista
 //{1}->{0}->{9}->{7}->{2}->{3}->{4}->{5}->NULL
+//ordem de adicionado:
+// 7º   6º   5º   4º  3º   2º    1º   0º
 // 0º   1º   2º   3º   4º   5º   6º   7º
 //Assim retornando o valor 2 na posição 4
 int get(linkedList * list, int pos ){
@@ -131,11 +132,11 @@ linkedList * sliptListAt(linkedList * list, int pos, int resultList){
 linkedList * sort(linkedList * list){
     linkedList * listCopy;
     listCopy = newList();
-    int i,j=1,size = getSize(list), listAsArray[size];
+    int i,j=1, k,size = getSize(list), listAsArray[size];
     for (i = 0; i <= size; i++) {
         listAsArray[i] = get(list, i);
     }
-    for (int k = 0; k <= size; ++k) {
+    for (k = 0; k <= size; ++k) {
         j = 1;
         for (i = 0; i < size; i++, j++) {
             if (listAsArray[i] < listAsArray[j]) {
@@ -148,8 +149,33 @@ linkedList * sort(linkedList * list){
     for (i = 0; i <=size ; i++) {
         listCopy = addList(listCopy, listAsArray[i]);
     }
-    free(list); //metodo para limpar a lista antiga da memoria já que ela mudou
     return listCopy;
+}
+
+
+//Metodo para copiar uma lista já existente para uma outra, simplesmente atribuindo uma lista a uma nova gera erros devido aos ponteiros
+//portanto o metodo no qual eu resolvi desenvolver para contornar esse problema seria percorrendo a lista já existente a qual deseja ser copiada
+//para cada item dela, o mesmo é atribuido a uma lista nova
+linkedList * copyList(linkedList * list){
+	int i = 0;
+	linkedList * copiedList;
+	copiedList = newList(); //criação da nova lista
+	for(i = 0; i<=getSize(list); i++){ //loop percorrendo a lista antiga
+		copiedList = addList(copiedList, get(list, i)); //copiando os valores usando a função get e addlist
+	}
+	return copiedList; //retornando a nova lista
+}
+
+//Metodo para espelhar a lista (o final vai para o começo e o começo para o final)
+//em resumo é identico a função acima mas dessa vez começa pelo final ao inves do começo
+linkedList * flipList(linkedList * list){
+	int i;
+	linkedList * copiedList;
+	copiedList = newList(); //criação da nova lista
+	for(i = getSize(list); i>=0; i--){ //loop percorrendo a lista antiga mas começando pelo final
+		copiedList = addList(copiedList, get(list, i)); //copiando os valores usando a função get e addlist
+	}
+	return copiedList; //retornando a nova lista
 }
 
 //Metodo para remover um valor de uma certa posição da lista
@@ -229,18 +255,166 @@ linkedList * addAtStart(linkedList * list, int val){
     return oldList; //retorna a copia da lista que a posição está no começo
 }
 
+linkedList * concatenar(linkedList * L1, linkedList * L2){
+    linkedList * listbackup = L1;
+    while(L1->next!=NULL){
+        L1 = L1->next;
+    }
+    L1->next=L2;
+    return listbackup;
+}
+
 //Metodo para imprimir a lista, ele percorre um loop imprimindo o valor enquanto for diferente de NULL
 void printList(linkedList * L ){
     while(L!=NULL){
-        printf("[%d]->", L->value);
+        printf("{%d}->", L->value);
+        L = L->next; //se deslocando na 'corrente' da lista
+    }
+}
+//Metodo para imprimir a lista com a posição, utilizando da variavel i, ele percorre um loop imprimindo o valor enquanto for diferente de NULL
+void printListWithPos(linkedList * L ){
+	int i = getSize(L);
+    while(L!=NULL){
+        printf("{%d}[pos: %d]\n", L->value, i);
+        i--;
         L = L->next; //se deslocando na 'corrente' da lista
     }
 }
 
 int main() {
-    //Utilizando os metodos:
-    linkedList * L;
+    int opcao, val, i;
+    linkedList * L, * L2, * L3;
+    L3 = newList();
+    L2 = newList();
     L = newList();
+    
+    do{
+        system("cls");
+        printf("Lista: ");
+        printList(L);
+        printf("\n");
+        printf("Escolha uma opção:\n 1 - Adicionar um valor a lista\n 2 - Adicionar um valor no começo da lista\n 3 - Remover um valor da lista\n 4 - Dividir lista\n 5 - Concatenar lista\n 6 - Ver Lista\n 7 - Inveter a lista\n 8 - Organizar a Lista\n 9 - Sair\n\nescolha: ");
+        scanf("%d", &opcao);
+        switch (opcao) {
+            case 1:
+                system("cls");
+                printf("Digite o valor a ser adicionado: \n");
+                scanf("%d", &val);
+                L = addList(L, val);
+                break;
+            case 2:
+            	system("cls");
+                printf("Digite o valor a ser adicionado no começo da lista: \n");
+                scanf("%d", &val);
+                L = addAtStart(L, val);
+                break;
+            case 3:
+                system("cls");
+                printf("Escolha qual valor você quer remover, por favor selecione a posição: \n");
+                printListWithPos(L);
+                printf("\n");
+                scanf("%d", &val);
+                if(getSize(L)<1){
+                	L = newList();
+				}else{
+					L = removeAt(L, val);
+				}
+                break;
+            case 4:
+                system("cls");
+                if(getSize(L)<2 || L == NULL){
+                    printf("Lista muito pequena para dividir, caso queira, remova um valor na opcão 2, aperte alguma tecla para continuar");
+                    getchar();
+            		getchar();
+                    break;
+                }else{
+                    printf("Escolha em qual valor você quer dividir a lista, por favor selecione a posição: \n");
+                    printListWithPos(L);
+                    printf("\n");
+                    scanf("%d", &val);
+                    L2 = copyList(L);
+                    L = sliptListAt(L, val, 0);
+                    L2 = sliptListAt(L2, val, 1);
+                    printf("\n Qual parte da lista você deseja ficar:");
+                    printf("\n 1: ");
+                    printList(L2);
+                    printf("\n 0: ");
+                    printList(L);
+                    printf("\n");
+                    scanf("%d", &val);
+                    if(val == 1){
+                    	L3 = copyList(L);
+                        L = copyList(L2);
+                        L2 = copyList(L3);
+                        free(L3);
+                        break;
+                    }if(val==0){
+                    	break;
+					}
+                }
+                break;
+            case 5:
+                system("cls");
+                if(L2!=NULL){
+                    printf("A outra lista da memoria é: \n");
+                    printList(L2);
+                    printf("\n deseja concatenar? \nresultado 1: ");
+                    printList(L);
+                    printList(L2);
+                    printf("\nresultado 2: ");
+                    printList(L2);
+                    printList(L);
+                    printf("\nConcatenar no estilo: (1/2)");
+                    scanf("%d", &val);
+                    if(val==1){
+                        L = concatenar(L, L2);
+                        break;
+                    }if(val==2){
+                    	L = concatenar(L2, L);
+                        break;
+					}
+                    break;
+                }else{
+                    printf("Não há outra lista na memoria");
+                    getchar();
+            		getchar();
+                }
+                break;
+            case 6:
+            	system("cls");
+            	printf("Sua lista:\n");
+            	printList(L);
+            	printf("\n\n\naperte algum botão para sair. ");
+            	getchar();
+            	getchar();
+            	break;
+            case 7:
+            	system("cls");
+            	printf("Lista invertida ficará assim: \n");
+            	printList(flipList(L));
+            	printf("\nDesjesa inverter? (1 - Sim /0 - Não)\n");
+            	scanf("%d", &val);
+            	if(val==1){
+            		L = flipList(L);
+            		break;
+				}
+				break;
+			case 8:
+				system("cls");
+				printf("A lista organizada ficará assim: \n");
+				printList(sort(L));
+				printf("\nDeseja organizar? (1 - Sim /0 - Não)\n");
+				scanf("%d", &val);
+            	if(val==1){
+            		L = sort(L);
+            		break;
+				}
+				break;
+        }	
+    }while(opcao!=9);
+    
+    /*
+	//Utilizando os metodos:
     L = addList(L, 5);
     L = addList(L, 4);
     L = addList(L, 2);
@@ -284,4 +458,8 @@ int main() {
     printf("\nLista organizada:");
     L3 = sort(L3);
     printList(L3);
+    printf("\nConcatenação de L1 e L2");
+    L = concatenar(L, L2);
+    printList(L);
+    */
 }
