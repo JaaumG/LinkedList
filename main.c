@@ -242,6 +242,15 @@ linkedList * removeAt(linkedList * list, int pos) {
 
 }
 
+int sum(linkedList * list){
+    int sum = 0;
+    while(list!=NULL){
+        sum += list->value;
+        list = list->next;
+    }
+    return sum;
+}
+
 //Metodo para adicionar um valor ao começo da lista
 //Exemplo: {1}->{0}->{9}->{7}->{2}->{3}->{4}->{5}->NULL
 //caso eu queria adicionar um nó entre o {5}-> e o NULL
@@ -293,7 +302,7 @@ int main() {
         printf("Lista: ");
         printList(L);
         printf("\n");
-        printf("Escolha uma opção:\n 1 - Adicionar um valor a lista\n 2 - Adicionar um valor no começo da lista\n 3 - Remover um valor da lista\n 4 - Dividir lista\n 5 - Concatenar lista\n 6 - Ver Lista\n 7 - Inveter a lista\n 8 - Organizar a Lista\n 9 - Sair\n\nescolha: ");
+        printf("Escolha uma opção:\n 1 - Adicionar um valor a lista\n 2 - Adicionar um valor no começo da lista\n 3 - Remover um valor da lista\n 4 - Dividir lista\n 5 - Concatenar lista\n 6 - Ver Lista\n 7 - Inveter a lista\n 8 - Organizar a Lista\n 9 - Somar todos os itens\n 10 - Sair\n\nescolha: ");
         scanf("%d", &opcao);
         switch (opcao) {
             case 1:
@@ -410,8 +419,15 @@ int main() {
             		break;
 				}
 				break;
+            case 9:
+                system("cls");
+                printf("A soma de todos os valores dessa lista e: %d", sum(L));
+                printf("\n\n\naperte algum botão para sair. ");
+                getchar();
+                getchar();
+                break;
         }	
-    }while(opcao!=9);
+    }while(opcao!=10);
     
     /*
 	//Utilizando os metodos:
